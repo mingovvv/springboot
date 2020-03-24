@@ -1,13 +1,11 @@
-package xyz.devyu.jpa;
-
-import java.util.List;
+package _1_standard;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-public class jpaMain {
+public class CURDMain {
 	public static void main(String[] args) {
 		
 		// 전체 애플리케이션 실행 중에 단 한번만 실행 되어야 함.

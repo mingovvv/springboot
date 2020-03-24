@@ -1,4 +1,4 @@
-package xyz.devyu.jpa;
+package _1_standard;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
