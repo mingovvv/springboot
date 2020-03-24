@@ -39,7 +39,7 @@ public class PersistenceContextMain {
 //			System.out.println(find1 == find2);
 			
 			// 쓰기 지연 SQL 저장소 TEST
-			Member member = em.find(Member.class, 1L);
+			Member1 member = em.find(Member1.class, 1L);
 			System.out.println("테스트1");
 			em.remove(member);
 			System.out.println("테스트2");

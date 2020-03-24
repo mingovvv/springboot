@@ -70,7 +70,7 @@ public class CURDMain {
 		// [delete]
 		try {
 			
-			Member findMember = em.find(Member.class, 1L);
+			Member1 findMember = em.find(Member1.class, 1L);
 			em.remove(findMember);
 			
 			tx.commit();

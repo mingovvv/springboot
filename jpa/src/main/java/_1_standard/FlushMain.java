@@ -20,7 +20,7 @@ public class FlushMain {
 		// flush - 영속성 컨텍스트의 변경 내용을 데이터베이스에 반영
 		try {
 			
-			Member member = new Member();
+			Member1 member = new Member1();
 			member.setId(1L);
 			member.setName("min");
 			
