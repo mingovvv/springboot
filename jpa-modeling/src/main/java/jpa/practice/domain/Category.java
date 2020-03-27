@@ -13,8 +13,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import jpa.practice.domain.item.Item;
+
 @Entity
-public class Category {
+public class Category extends BaseEntity{
 	@Id @GeneratedValue
 	@Column(name =  "CATERORY_ID")
 	private Long id;

@@ -1,4 +1,4 @@
-package _6_super_mapped;
+package _6_abstract_mapping;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

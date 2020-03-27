@@ -7,8 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import jpa.practice.domain.item.Item;
+
 @Entity
-public class OrderItem {
+public class OrderItem extends BaseEntity{
 	@Id @GeneratedValue
 	@Column(name =  "ORDER_ITEM_ID")
 	private Long id;

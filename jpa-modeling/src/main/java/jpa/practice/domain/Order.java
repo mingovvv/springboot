@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @Entity
 // Order가 DB 예약어로 지정된 데이터베이스가 존재하기 때문에 이름을 약간 변경시켜줌.
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseEntity{
 
 	@Id @GeneratedValue
 	@Column(name =  "ORDERS_ID")
