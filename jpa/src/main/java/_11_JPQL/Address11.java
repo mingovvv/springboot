@@ -1,44 +1,40 @@
-package _10_embeded_type;
+package _11_JPQL;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Adress {
+public class Address11 {
 	private String city;
-	private String zipcode;
 	private String street;
+	private String zipcode;
 	
-	public Adress() {
-
+	public Address11() {
+		// TODO Auto-generated constructor stub
 	}
-
-	public Adress(String city, String zipcode, String street) {
+	
+	public Address11(String city, String street, String zipcode) {
 		this.city = city;
-		this.zipcode = zipcode;
 		this.street = street;
+		this.zipcode = zipcode;
 	}
-
 	public String getCity() {
 		return city;
 	}
-
 	public void setCity(String city) {
 		this.city = city;
 	}
-
-	public String getZipcode() {
-		return zipcode;
-	}
-
-	public void setZipcode(String zipcode) {
-		this.zipcode = zipcode;
-	}
-
 	public String getStreet() {
 		return street;
 	}
-
 	public void setStreet(String street) {
 		this.street = street;
 	}
+	public String getZipcode() {
+		return zipcode;
+	}
+	public void setZipcode(String zipcode) {
+		this.zipcode = zipcode;
+	}
+	
+	
 }
