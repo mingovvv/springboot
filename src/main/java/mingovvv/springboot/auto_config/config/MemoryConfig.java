@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@Conditional(MemoryCondition.class) // MemoryCondition 클래스의 빈 생성조건을 참조
+//@Conditional(MemoryCondition.class) // MemoryCondition 클래스의 빈 생성조건을 참조
 @ConditionalOnProperty(name = "memory", havingValue = "on")
 public class MemoryConfig {
 
