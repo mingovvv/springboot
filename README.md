@@ -190,16 +190,31 @@ implementation files('libs/memory-v2.jar')
      ...                
      ```
 스프링부트는 어떤 방식으로 자동구성(@AutoConfiguration)을 인식할까?
+
 ![Desktop View](/images/2.png)
  - @SpringBootApplication
+
 ![Desktop View](/images/3.png)
  - @EnableAutoConfiguration - 자동구성을 활성화하는 애노테이션
+
 ![Desktop View](/images/4.png)
  - @Import(AutoConfigurationImportSelector.class) - 스프링 설정정보(@Configuration)을 포함
 
 동작 순서는 위순서를 따라서 실행된다.
 
-`AutoConfigurationImportSelector`는 `ImportSelector` 인터페이스를 구현하였다.
+여기서 `AutoConfigurationImportSelector` 클래스는 `ImportSelector` 인터페이스를 구현한 구현체이다.
+
+스프링부트는 2가지 방식으로 설정정보를 import 할 수 있다.
+1. 정적인 방법
+  - `@Import(className.class)` : 정적으로 명시된 클래스를 설정정보로 import
+2. 동적인 방법
+  - `@Import(ImportSelector)` : 동적으로 클래스를 인식하여 import
+
+`AutoConfigurationImportSelector`는 모든 라이브러리의 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`
+경로를 탐색하고 내용을 읽어서 동적으로 설정정보를 import 하고 있는 것이다. 그것이 바로 스프링 컨테이너에 빈으로 등록되고 사용되는 것!
+
+[테스트 코드](src/test/java/mingovvv/springboot/auto_config/selector/SelectorTest.java)
+[Selector 구현체 코드](src/test/java/mingovvv/springboot/auto_config/selector/HelloImportSelector.java)
 
 
 
