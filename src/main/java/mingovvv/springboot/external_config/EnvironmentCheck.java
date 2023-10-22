@@ -18,10 +18,10 @@ public class EnvironmentCheck {
     @PostConstruct
     public void init() {
         String url = env.getProperty("url");
-        String username = env.getProperty("username");
+        String username1 = env.getProperty("username1");
         String password = env.getProperty("password");
         log.info("env url={}", url);
-        log.info("env username={}", username);
+        log.info("env username1={}", username1);
         log.info("env password={}", password);
     }
 

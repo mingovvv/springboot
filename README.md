@@ -367,3 +367,34 @@ public class CommandLineBean {
  - 스프링은 `Environment` 인터페이스를 통해 동일한 명령어로 외부 환경 구현체에 접근할 수 있음
  - 특정 외부 환경에 종속적인 코딩에서 벗어날 수 있음
  - 동일한 key가 존재할 수 있으므로 부트는 외부 환경 `우선순위`를 정해두었음
+
+
+## 외부 파일(설정 데이터) -> 내부 파일
+> OS 환경변수, 자바 시스템 속성, 커맨드 라인 옵션 인수가 증가할수록 관리하기 힘들어지므로 파일로 관리하는 방법이 생김. 외부 파일로 관리하는 것보다 내부 파일로 관리하는 장점이 훨씬 많음.
+
+#### `.properties` 파일 사용하기
+ - key-value 형식
+ - 프로젝트 내에서 소스코드와 함께 관리됨 -> 빌드 시 포함됨
+ - 빌드된 프로젝트는 개발과 운영 모두의 설정 데이터를 가지고 있음. 환경변수에 따라 특정 데이터를 읽어서 적용함.
+   - 규칙 : `application-{profile}.properties`
+   - 개발용 설정파일 : `application-dev.properties`
+   - 운영용 설정파일 : `application-prod.properties`
+ - `profile` 을 적용해서 설정파일을 선택
+   - 커멘드 라인 옵션 인수 : `--spring.profiles.active=dev`
+   - VM 시스템 속성 : `-Dspring.profiles.active=dev`
+
+#### `.properties` 파일 하나로 사용하기
+ - 물리적인 `.properties` 파일 하나로 논리적인 프로필 영역을 구성할 수 있음
+ - ```properties
+    spring.config.activate.on-profile=dev
+    url=dev.mingovvv.com
+    username=dev_mingo
+    password=dev_mingo
+    #---
+    spring.config.activate.on-profile=prod
+    url=prod.mingovvv.com
+    username=prod_mingo
+    password=prod_mingo
+   ```
+ - `#---`를 통해서 논리적으로 영역을 구분 / yml은 `---`
+ - `spring.config.activate.on-profile` 로 프로필을 지정해 주어야 함
