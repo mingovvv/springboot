@@ -328,3 +328,30 @@ public static void main(String[] args) {
  - Spring 표준
  - `--` dash 2개를 연결해서 사용하면 key=value 형식으로 program arguments를 받을 수 있음
  - `DefaultApplicationArguments` 를 구현해야 함
+
+**커맨드 라인 옵션 + 스프링을 통해 사용하는 방법**
+```java
+@Slf4j
+@Component
+public class CommandLineBean {
+
+    private final ApplicationArguments arguments;
+
+    public CommandLineBean(ApplicationArguments arguments) {
+        this.arguments = arguments;
+    }
+
+    @PostConstruct
+    public void init() {
+        log.info("source {}", List.of(arguments.getSourceArgs()));
+        log.info("optionNames {}", arguments.getOptionNames());
+        Set<String> optionNames = arguments.getOptionNames();
+        for (String optionName : optionNames) {
+            log.info("option args {}={}", optionName, arguments.getOptionValues(optionName));
+        }
+    }
+
+}
+```
+ - 스프링부트는 커맨드라인, 커맨드라인옵션 인수 모두를 사용할 수 있는 `ApplicationArguments`를 스프링 빈으로 등록해준다.
+ - 의존성 주입만 받는다면 어디서든 커맨드라인, 커맨드라인옵션를 사용할 수 있음
