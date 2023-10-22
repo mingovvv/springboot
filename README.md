@@ -398,3 +398,23 @@ public class CommandLineBean {
    ```
  - `#---`를 통해서 논리적으로 영역을 구분 / yml은 `---`
  - `spring.config.activate.on-profile` 로 프로필을 지정해 주어야 함
+
+## 우선순위
+ - https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
+
+자주 사용하는 우선순위 (내려갈 수록 우선순위가 높다)
+- 설정 데이터( application.properties )
+- OS 환경변수
+- 자바 시스템 속성
+- 커맨드 라인 옵션 인수
+- @TestPropertySource (테스트에서 사용)
+설정 데이터 우선순위
+- jar 내부 application.properties
+- jar 내부 프로필 적용 파일 application-{profile}.properties
+- jar 외부 application.properties
+- jar 외부 프로필 적용 파일 application-{profile}.properties
+
+더 유연한 것이 우선권을 가진다. (변경하기 어려운 파일 보다 실행시 원하는 값을 줄 수 있는 자바 시스템 속성이 더 우선권을 가진다.)
+범위가 넒은 것 보다 좁은 것이 우선권을 가진다. 
+ - OS 환경변수 보다 자바 시스템 속성이 우선권이 있다.
+ - 자바 시스템 속성 보다 커맨드 라인 옵션 인수가 우선권이 있다
