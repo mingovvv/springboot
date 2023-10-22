@@ -275,5 +275,56 @@ public static void main(String[] args) {
 
  - program arguments option : `url username password`
  - java 실행 시 : `java -jar app.jar url username password`
- - 통 문자열을 공백을 기준으로 split
+ - 통 문자열을 공백을 기준으로 split(공백을 연결하려면 double quotation으로 문자를 감싸면 됨)
  - key-value 형태가 아니라서 번거로움
+
+**커맨드 라인 옵션 인수 등장**
+```java
+public static void main(String[] args) {
+
+    // program arguments
+    // `--url=mingo.com --username=mingo --password=ming dialect=MySQL`
+    for (String arg : args) {
+        log.info("arg : {}", arg);
+    }
+
+    ApplicationArguments appArgs = new DefaultApplicationArguments(args);
+    log.info("SourceArgs = {}", List.of(appArgs.getSourceArgs()));
+    log.info("NonOptionArgs = {}", appArgs.getNonOptionArgs());
+    log.info("OptionNames = {}", appArgs.getOptionNames());
+
+    Set<String> optionNames = appArgs.getOptionNames();
+    for (String optionName : optionNames) {
+        log.info("option args {}={}", optionName, appArgs.getOptionValues(optionName));
+    }
+    
+    List<String> url = appArgs.getOptionValues("url");
+    List<String> username = appArgs.getOptionValues("username");
+    List<String> password = appArgs.getOptionValues("password");
+    List<String> mode = appArgs.getOptionValues("dialect");
+    log.info("url={}", url);
+    log.info("username={}", username);
+    log.info("password={}", password);
+    log.info("dialect={}", mode);
+
+    //  arg : --url=mingo.com
+    //  arg : --username=mingo
+    //  arg : --password=ming
+    //  arg : dialect=MySQL
+    //  SourceArgs = [--url=mingo.com, --username=mingo, --password=ming, dialect=MySQL]
+    //  NonOptionArgs = [dialect=MySQL]
+    //  OptionNames = [password, url, username]
+    //  option args password=[ming]
+    //  option args url=[mingo.com]
+    //  option args username=[mingo]
+    //  url=[mingo.com]
+    //  username=[mingo]
+    //  password=[ming]
+    //  dialect=null
+    
+}
+```
+ - 커맨드 라인 인수를 key=value 형식으로 구분하는 방법으로 나온 `커맨드 라인 옵션 인수`
+ - Spring 표준
+ - `--` dash 2개를 연결해서 사용하면 key=value 형식으로 program arguments를 받을 수 있음
+ - `DefaultApplicationArguments` 를 구현해야 함
