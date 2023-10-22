@@ -418,3 +418,188 @@ public class CommandLineBean {
 범위가 넒은 것 보다 좁은 것이 우선권을 가진다. 
  - OS 환경변수 보다 자바 시스템 속성이 우선권이 있다.
  - 자바 시스템 속성 보다 커맨드 라인 옵션 인수가 우선권이 있다
+
+## 외부설정 조회해오기
+- Environment
+- @Value
+- @ConfigurationProperties
+
+#### Environment
+```java
+@Slf4j
+//@Configuration
+public class MyDataSourceEnvConfig {
+
+    private final Environment env;
+
+    public MyDataSourceEnvConfig(Environment env) {
+        this.env = env;
+    }
+
+    @Bean
+    public MyDataSource myDataSource() {
+        String url = env.getProperty("my.datasource.url");
+        String username = env.getProperty("my.datasource.username");
+        String password = env.getProperty("my.datasource.password");
+        int maxConnection = env.getProperty("my.datasource.etc.max-connection", Integer.class);
+        Duration timeout = env.getProperty("my.datasource.etc.timeout", Duration.class);
+        List<String> options = env.getProperty("my.datasource.etc.options", List.class);
+        return new MyDataSource(url, username, password, maxConnection, timeout, options);
+    }
+
+
+}
+```
+ - 타입변환 제공 : `Environment.getProperty(key, Type);`
+   - https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion
+
+#### @Value
+```java
+@Slf4j
+@Configuration
+public class MyDataSourceValueConfig {
+
+    // 필드주입
+    @Value("${my.datasource.url}")
+    private String url;
+    @Value("${my.datasource.username}")
+    private String username;
+    @Value("${my.datasource.password}")
+    private String password;
+    @Value("${my.datasource.etc.max-connection}")
+    private int maxConnection;
+    @Value("${my.datasource.etc.timeout}")
+    private Duration timeout;
+    @Value("${my.datasource.etc.options}")
+    private List<String> options;
+    
+    @Bean
+    public MyDataSource myDataSource1() {
+        return new MyDataSource(url, username, password, maxConnection, timeout, options);
+    }
+
+    // 파라미터 주입
+    @Bean
+    public MyDataSource myDataSource2(
+            @Value("${my.datasource.url}") String url,
+            @Value("${my.datasource.username}") String username,
+            @Value("${my.datasource.password}") String password,
+            @Value("${my.datasource.etc.max-connection}") int maxConnection,
+            @Value("${my.datasource.etc.timeout}") Duration timeout,
+            @Value("${my.datasource.etc.options}") List<String> options) {
+        return new MyDataSource(url, username, password, maxConnection, timeout, options);
+    }
+
+}
+```
+ - `@Value(${...})` 를 통해 외부설정 조회
+ - 필드주입 / 파라미터 주입 둘 다 지원
+ - default값 설정 가능 : `@Value(${test:mingo})` / default = mingo
+
+#### @ConfigurationProperties
+> 외부설정을 묶음으로 가져와 객체와 매핑하는 기능을 제공한다. type-safety한 설정 속성이다.
+
+```properties
+# application.properties
+my.datasource.url=local.db.com
+my.datasource.username=local_user
+my.datasource.password=local_pw
+my.datasource.etc.max-connection=1
+my.datasource.etc.timeout=3500ms
+my.datasource.etc.options=CACHE,ADMIN
+
+```
+
+#### @ConfigurationProperties 세터 주입
+
+```java
+@Data
+@ConfigurationProperties("my.datasource")
+public class MyDataSourcePropertiesV1 {
+
+    private String url;
+    private String username;
+    private String password;
+    private Etc etc = new Etc();
+
+    @Data
+    public static class Etc {
+        private int maxConnection;
+        private Duration timeout;
+        private List<String> options = new ArrayList<>();
+    }
+
+}
+```
+ - 외부 설정을 받을 객체를 생성
+ - `@ConfigurationProperties("my.datasource")` : 설정의 공통 prefix 명시적으로 작성
+ - 자바빈 프로퍼티 방식이라 `getter`, `setter` 가 필요함
+
+```java
+@Configuration
+@EnableConfigurationProperties(MyDataSourcePropertiesV1.class)
+public class MyDataSourceConfigV1 {
+
+    private final MyDataSourcePropertiesV1 properties;
+
+    public MyDataSourceConfigV1(MyDataSourcePropertiesV1 properties) {
+        this.properties = properties;
+    }
+
+    @Bean
+    public MyDataSource myDataSource1() {
+        return new MyDataSource(
+                properties.getUrl(),
+                properties.getUsername(),
+                properties.getPassword(),
+                properties.getEtc().getMaxConnection(),
+                properties.getEtc().getTimeout(),
+                properties.getEtc().getOptions());
+    }
+
+}
+```
+ - `@EnableConfigurationProperties(MyDataSourcePropertiesV1.class)` 사용할 프로퍼티 객체 명시
+   - 명시된 class는 스프링 빈으로 등록되고 DI 받아서 사용할 수 있음
+ - 표기법 변환 : `max-connection`는 `maxConnection`로 자동 컨버팅
+ - `@ConfigurationPropertiesScan` 를 통해 범위 스캔 가능 (`@EnableConfigurationProperties` 생략 가능)
+
+#### @ConfigurationProperties 생성자 주입
+
+```java
+@Getter
+@ConfigurationProperties("my.datasource")
+public class MyDataSourcePropertiesV2 {
+
+    private String url;
+    private String username;
+    private String password;
+    private Etc etc = new Etc();
+
+    public MyDataSourcePropertiesV2(String url, String username, String password, Etc etc) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+        this.etc = etc;
+    }
+
+    @Getter
+    public static class Etc {
+
+        private int maxConnection;
+        private Duration timeout;
+        private List<String> options = new ArrayList<>();
+
+        public Etc(int maxConnection, Duration timeout, @DefaultValue("DEFAULT") List<String> options) {
+            this.maxConnection = maxConnection;
+            this.timeout = timeout;
+            this.options = options;
+        }
+
+    }
+
+}
+```
+ - 생성자를 통한 외부설정 값 주입
+ - `@Getter` /  `@DefaultValue("DEFAULT")` 디폴트 값 사용 가능
+ - 스프링부트 3.0 이하는 생성자에 `@ConstructorBinding` 넣어주어야 함
