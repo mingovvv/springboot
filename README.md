@@ -1,13 +1,20 @@
 # springboot
 
-### Auto-Config
-
 - 스프링부트 핵심
     - WAS 톰캣 내장
     - 라이브러리 관리 - 손쉬운 빌드 구성을 위하여 스타터 종속성 제공, 스프링과 외부 라이브러리의 버전을 자동으로 관리
     - 자동 구성 - 프로젝트 시작에 필요한 스프링과 외부 라이브러리의 빈을 자동 등록
     - 외부 설정 - 서버에 따라 달라져야 하는 외부 설정 공통화 (dev/qa/release)
     - 프로덕션 준비 - 모니터링을 위한 메트릭, 상태 확인 기능
+
+## 라이브러리 관리
+ > 스프링부트 라이브러리 버전관리
+
+- `id 'io.spring.dependency-management' version '1.1.0'` 플러그인을 통한 자동 버전관리(boot 버전 기준)
+- 라이브러리 버전 관리 : 버전을 명시하지 않아도 라이브러리 사이의 호환성이 맞는 버전을 자동세팅해서 지원
+- 스프링 부트 스타터 : 연관된 의존관계 라이브러리를 한번에 가져오는 방식을 지원
+
+## 자동 구성(Auto-Config)
 - 스프링부트 자동구성(Auto configuration)
     - ![Desktop View](/images/1.png) 
     - 자주 사용되는 빈들을 자동으로 등록해주는 기능
@@ -42,10 +49,6 @@
   
     }
     ```
-- 스프링부트 라이브러리 버전관리
-    - `id 'io.spring.dependency-management' version '1.1.0'` 플러그인을 통한 자동 버전관리(boot 버전 기준)
-    - 라이브러리 버전 관리 : 버전을 명시하지 않아도 라이브러리 사이의 호환성이 맞는 버전을 자동세팅 지원
-    - 스프링 부트 스타터 : 연관된 의존관계 라이브러리를 한번에 가져오는 방식을 지원 
 
 #### 동적으로 빈 생성여부 결정 직접 만들어보기
 ```java
@@ -216,13 +219,13 @@ implementation files('libs/memory-v2.jar')
 [테스트 코드](src/test/java/mingovvv/springboot/auto_config/selector/SelectorTest.java)
 [Selector 구현체 코드](src/test/java/mingovvv/springboot/auto_config/selector/HelloImportSelector.java)
 
-#### 외부 설정
+## 외부 설정
  - `OS 환경 변수`: OS에서 지원하는 외부 설정, 해당 OS를 사용하는 모든 프로세스에서 사용
  - `자바 시스템 속성`: 자바에서 지원하는 외부 설정, 해당 JVM안에서 사용
  - `자바 커맨드 라인 인수`: 커맨드 라인에서 전달하는 외부 설정, 실행시 main(args) 메서드에서 사용
  - `외부 파일(설정 데이터)`: 프로그램에서 외부 파일을 직접 읽어서 사용
 
-##### OS 환경 변수
+#### OS 환경 변수
 > OS를 사용하는 모든 프로그램에서 읽을 수 있는 설정값이다. 한마디로 다른 외부 설정과 비교해서 사용 범위가 가장 넓음
 
 ```java
@@ -237,7 +240,7 @@ for (String key : getenv.keySet()) {
  - 사용안함
 
 
-##### 자바 시스템 속성
+#### 자바 시스템 속성
 > 자바 시스템 속성은 실행되고 있는 `JVM` 안에서 접근 가능한 외부 설정
 
 ```java
@@ -261,7 +264,7 @@ System.setProperty("dialect", "MySQL");
  - `System.setProperty(key, value)` 를 통해 런타임 환경에서 추가 
 
 
-##### 자바 커맨드 라인 인수
+#### 자바 커맨드 라인 인수
 > 커맨드 라인 인수(Command line arguments)는 애플리케이션 실행 시점에 외부 설정값을 `main(args)` 메서드의 `args` 파라미터로 전달하는 방법
 
 ```java
@@ -355,3 +358,12 @@ public class CommandLineBean {
 ```
  - 스프링부트는 커맨드라인, 커맨드라인옵션 인수 모두를 사용할 수 있는 `ApplicationArguments`를 스프링 빈으로 등록해준다.
  - 의존성 주입만 받는다면 어디서든 커맨드라인, 커맨드라인옵션를 사용할 수 있음
+
+##### 외부설정 스프링 통합
+> OS 환경변수, 자바 시스템 속성, 커맨드 라인 옵션 인수 모두 외부 설정을 key-value 형식으로 사용할 수 있지만 제공해주는 곳에 따라 읽는 법이 다르다. getenv(), getProperty() 라던지.. 이것을 스프링부트는 통합하였다. 
+
+![Desktop View](/images/5.png)
+ - 부트는 `org.springframework.core.env.PropertySource` 추상 클래스를 만들고 모든 외부 환경 제공자의 구현체를 만들어 둠
+ - 스프링은 `Environment` 인터페이스를 통해 동일한 명령어로 외부 환경 구현체에 접근할 수 있음
+ - 특정 외부 환경에 종속적인 코딩에서 벗어날 수 있음
+ - 동일한 key가 존재할 수 있으므로 부트는 외부 환경 `우선순위`를 정해두었음
