@@ -216,6 +216,64 @@ implementation files('libs/memory-v2.jar')
 [테스트 코드](src/test/java/mingovvv/springboot/auto_config/selector/SelectorTest.java)
 [Selector 구현체 코드](src/test/java/mingovvv/springboot/auto_config/selector/HelloImportSelector.java)
 
+#### 외부 설정
+ - `OS 환경 변수`: OS에서 지원하는 외부 설정, 해당 OS를 사용하는 모든 프로세스에서 사용
+ - `자바 시스템 속성`: 자바에서 지원하는 외부 설정, 해당 JVM안에서 사용
+ - `자바 커맨드 라인 인수`: 커맨드 라인에서 전달하는 외부 설정, 실행시 main(args) 메서드에서 사용
+ - `외부 파일(설정 데이터)`: 프로그램에서 외부 파일을 직접 읽어서 사용
+
+##### OS 환경 변수
+> OS를 사용하는 모든 프로그램에서 읽을 수 있는 설정값이다. 한마디로 다른 외부 설정과 비교해서 사용 범위가 가장 넓음
+
+```java
+Map<String, String> getenv = System.getenv();
+for (String key : getenv.keySet()) {
+    log.info("key = {}, value = {}", key, getenv.get(key));
+}
+```
+ - 서버 자체의 OS 환경변수를 이용해서 prod/qa 애플리케이션을 구분
+   - 운영서버 환경변수 : dburl = prod.com 
+   - 개발서버 환경변수 : dburl = qa.com
+ - 사용안함
 
 
+##### 자바 시스템 속성
+> 자바 시스템 속성은 실행되고 있는 `JVM` 안에서 접근 가능한 외부 설정
 
+```java
+Properties properties = System.getProperties();
+for (Object key : properties.keySet()) {
+    log.info("key = {}, value = {}", key, properties.get(key));
+}
+
+String url = System.getProperty("url");
+String username = System.getProperty("username");
+String password = System.getProperty("password");
+
+log.info("url = {}, username = {}, password = {}", url, username, password);
+
+// 런타임 환경에서 추가 가능
+System.setProperty("dialect", "MySQL");
+```
+ - `-D` 옵션을 통해 실행 시점에서 외부 설정을 추가
+   - VM option : `-Durl=mingo.com -Dusername=mingo -Dpassword=mingo`
+   - java 실행 시 : `java -Durl=mingo.com -Dusername=mingo -Dpassword=mingo -jar app.jar`
+ - `System.setProperty(key, value)` 를 통해 런타임 환경에서 추가 
+
+
+##### 자바 커맨드 라인 인수
+> 커맨드 라인 인수(Command line arguments)는 애플리케이션 실행 시점에 외부 설정값을 `main(args)` 메서드의 `args` 파라미터로 전달하는 방법
+
+```java
+public static void main(String[] args) {
+    for (String arg : args) {
+        log.info("arg : {}", arg);
+    }
+
+}
+```
+
+ - program arguments option : `url username password`
+ - java 실행 시 : `java -jar app.jar url username password`
+ - 통 문자열을 공백을 기준으로 split
+ - key-value 형태가 아니라서 번거로움
