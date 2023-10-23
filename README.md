@@ -603,3 +603,67 @@ public class MyDataSourcePropertiesV2 {
  - 생성자를 통한 외부설정 값 주입
  - `@Getter` /  `@DefaultValue("DEFAULT")` 디폴트 값 사용 가능
  - 스프링부트 3.0 이하는 생성자에 `@ConstructorBinding` 넣어주어야 함
+
+## 프로덕션 준비 기능
+
+> 지표(metric), 추적(trace), 감사(auditing), 모니터링
+
+#### Actuator
+
+라이브러리 추가
+ - `implementation 'org.springframework.boot:spring-boot-starter-actuator'`
+
+```text
+// http://localhost:8080/actuator
+
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/actuator",
+      "templated": false
+    },
+    "health-path": {
+      "href": "http://localhost:8080/actuator/health/{*path}",
+      "templated": true
+    },
+    "health": {
+      "href": "http://localhost:8080/actuator/health",
+      "templated": false
+    }
+  }
+}
+```
+ - `management.endpoints.web.exposure.include=*` : properties 활성화시키면 더 많은 정보를 제공받음
+
+```text
+// http://localhost:8080/actuator/health
+
+{
+  "status": "UP"
+}
+```
+ - 서버 상태를 의미함
+
+기본적으로 `엔드포인트 활성화`, `엔드포인트 노출` 두 단계가 필요하다.
+ - `엔드포인트 활성화` : 기능 on/off 
+ - `엔드포인트 노출` : 엔드포인트 제공할 소스 선택 -> HTTP / JMX 
+
+#### 다양한 엔드포인트
+
+- beans : 스프링 컨테이너에 등록된 스프링 빈을 보여준다.
+- conditions : condition 을 통해서 빈을 등록할 때 평가 조건과 일치하거나 일치하지 않는 이유를 표시한다.
+- configprops : @ConfigurationProperties 를 보여준다.
+- env : Environment 정보를 보여준다.
+- health : 애플리케이션 헬스 정보를 보여준다.
+- httpexchanges : HTTP 호출 응답 정보를 보여준다. `HttpExchangeRepository` 를 구현한 빈을 별도로 등록해야 한다.
+- info : 애플리케이션 정보를 보여준다.
+- loggers : 애플리케이션 로거 설정을 보여주고 변경도 할 수 있다.
+- metrics : 애플리케이션의 메트릭 정보를 보여준다.
+- mappings : @RequestMapping 정보를 보여준다.
+- threaddump : 쓰레드 덤프를 실행해서 보여준다.
+- shutdown : 애플리케이션을 종료한다. 이 기능은 기본으로 비활성화 되어 있다.
+
+스프링 공식 문서
+> https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints
+
+

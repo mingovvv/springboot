@@ -40,6 +40,9 @@ dependencies {
 //     외부 라이브러리 의존성 주입 (libs 폴더명 주의) / 라이브러리 @AutoConfiguration 적용
     implementation files('libs/memory-v2.jar')
 
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {

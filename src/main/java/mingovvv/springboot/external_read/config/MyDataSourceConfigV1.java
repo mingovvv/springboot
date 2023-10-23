@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
-@Configuration
+//@Configuration
 //@EnableConfigurationProperties(MyDataSourcePropertiesV1.class) // @ConfigurationPropertiesScan 대체 가능
 public class MyDataSourceConfigV1 {
 

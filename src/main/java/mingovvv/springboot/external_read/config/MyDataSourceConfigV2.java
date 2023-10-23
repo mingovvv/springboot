@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
-@Configuration
-@EnableConfigurationProperties(MyDataSourcePropertiesV2.class) // @ConfigurationPropertiesScan 대체 가능
+//@Configuration
+//@EnableConfigurationProperties(MyDataSourcePropertiesV2.class) // @ConfigurationPropertiesScan 대체 가능
 public class MyDataSourceConfigV2 {
 
     private final MyDataSourcePropertiesV2 properties;
